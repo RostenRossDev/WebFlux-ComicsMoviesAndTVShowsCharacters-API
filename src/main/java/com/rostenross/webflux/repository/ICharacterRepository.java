@@ -5,10 +5,11 @@ import org.springframework.stereotype.Repository;
 
 import com.rostenross.webflux.model.Character;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
 public interface ICharacterRepository extends ReactiveMongoRepository<Character, String>{
 
-	public Mono<Character> findByFullName(String name);
+	public Flux<Character> findByFullName(String name);
 }

@@ -1,13 +1,9 @@
 package com.rostenross.webflux.service;
 
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.rostenross.webflux.controllers.CharacterCreatedEvent;
 import com.rostenross.webflux.model.Character;
 import com.rostenross.webflux.repository.ICharacterRepository;
 
@@ -19,7 +15,6 @@ public class ServiceCharacterImpl  implements ICharacterService{
 
 	@Autowired
 	private ICharacterRepository repo;
-	private ApplicationEventPublisher publisher;
 	
 	@Override
 	public Flux<Character> getAll() {
@@ -29,7 +24,7 @@ public class ServiceCharacterImpl  implements ICharacterService{
 
 	
 	@Override
-	public Mono<Character> getByName(String name) {
+	public Flux<Character> getByName(String name) {
 		// TODO Auto-generated method stub
 		return repo.findByFullName(name);
 	}

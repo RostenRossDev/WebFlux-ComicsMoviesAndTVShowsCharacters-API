@@ -11,7 +11,6 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import com.rostenross.webflux.model.Character;
 import com.rostenross.webflux.service.ServiceCharacterImpl;
 
-import jdk.jfr.ContentType;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -36,6 +35,13 @@ public class CharacterHandler {
 						.contentType(MediaType.APPLICATION_JSON)
 						.body(service.getById(id), Character.class))
 				.switchIfEmpty(ServerResponse.notFound().build());
+	}
+	
+	public Mono<ServerResponse> findByName(ServerRequest req){
+		String name =req.pathVariable("name");
+		return ServerResponse.ok()
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(service.getByName(name), Character.class);
 	}
 	
 	public Mono<ServerResponse> save(ServerRequest req){

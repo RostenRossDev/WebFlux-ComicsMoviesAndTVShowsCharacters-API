@@ -11,7 +11,7 @@ public interface ICharacterService {
 	
 	public Mono<Character> getById(String id);
 	
-	public Mono<Character> getByName(String name);
+	public Flux<Character> getByName(String name);
 	
 	public Mono<Character> create(Character caracter);
 	
