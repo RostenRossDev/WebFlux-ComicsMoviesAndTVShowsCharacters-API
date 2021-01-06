@@ -12,7 +12,6 @@ import com.rostenross.webflux.model.Character;
 import com.rostenross.webflux.service.ServiceCharacterImpl;
 
 import jdk.jfr.ContentType;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -21,14 +20,13 @@ public class CharacterHandler {
 	@Autowired
 	private ServiceCharacterImpl service;
 	
-	public Flux<ServerResponse> findAll(ServerRequest req) {
+	public Mono<ServerResponse> findAll(ServerRequest req) {
 		log.info(service.getAll().toString());
 		log.info("En el handler de findall");
-		Flux<Character> characters = service.getAll();
-		return characters
-				.flatMap(c -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(c, Character.class))
-				.switchIfEmpty(ServerResponse.notFound().build());
-		}
+		return ServerResponse.ok()
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(service.getAll(), Character.class);
+	}
 	
 	
 	public Mono<ServerResponse> findById(ServerRequest req){
@@ -36,7 +34,7 @@ public class CharacterHandler {
 		return 	service.getById(id)
 				.flatMap((c) -> ServerResponse.ok()
 						.contentType(MediaType.APPLICATION_JSON)
-						.body(c, Character.class))
+						.body(service.getById(id), Character.class))
 				.switchIfEmpty(ServerResponse.notFound().build());
 	}
 	
