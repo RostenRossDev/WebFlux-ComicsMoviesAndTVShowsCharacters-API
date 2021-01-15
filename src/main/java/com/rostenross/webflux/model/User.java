@@ -1,94 +1,75 @@
 package com.rostenross.webflux.model;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.Setter;
-import lombok.ToString;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 
 @Document
-@ToString @AllArgsConstructor @NoArgsConstructor
 public class User implements UserDetails{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@Id
-	private String id;
 	private String username;
 	private String password;
+	private Set<GrantedAuthority> roles = new HashSet<>();
 	
-	@Getter @Setter
-	private boolean enabled;
-	
-	@Getter @Setter
-	private List<Role> roles;
-	
-	public User(String username) {
-		this.username = username;
-	}
+	private boolean active= true;
 
+	public void setEncodePassword(String pass) {
+		this.password=PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(pass);
+	}
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub
-		return this.roles.stream().map(authority-> new SimpleGrantedAuthority(authority.name())).collect(Collectors.toList());
+		return roles;
 	}
 
 	@Override
-	@JsonIgnore
 	public String getPassword() {
 		// TODO Auto-generated method stub
-		return this.password;
+		return password;
 	}
 
 	@Override
 	public String getUsername() {
 		// TODO Auto-generated method stub
-		return this.username;
-	}
-	
-	public void setUsername(String username) {
-		this.username=username;
-	}
-	
-	@JsonProperty
-	public void setPassword(String password) {
-		this.password=password;
+		return username;
 	}
 
 	@Override
 	public boolean isAccountNonExpired() {
 		// TODO Auto-generated method stub
-		return false;
+		return active;
 	}
 
 	@Override
 	public boolean isAccountNonLocked() {
 		// TODO Auto-generated method stub
-		return false;
+		return active;
 	}
 
 	@Override
 	public boolean isCredentialsNonExpired() {
 		// TODO Auto-generated method stub
-		return false;
+		return active;
 	}
 
 	@Override
 	public boolean isEnabled() {
 		// TODO Auto-generated method stub
-		return this.enabled;
+		return active;
 	}
 	
 	
-}
+	
+	}

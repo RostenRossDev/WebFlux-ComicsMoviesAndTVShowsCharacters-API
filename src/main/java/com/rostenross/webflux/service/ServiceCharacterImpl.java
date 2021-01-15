@@ -34,6 +34,12 @@ public class ServiceCharacterImpl  implements ICharacterService{
 		// TODO Auto-generated method stub
 		return repo.save(new Character(c.getFullName(), c.getDescription()));
 	}
+	
+	@Override
+	public Flux<Character> createMany(Flux<Character> characters) {
+		// TODO Auto-generated method stub
+		return repo.saveAll(characters);
+	}
 
 	@Override	
 	public Mono<Character> update(Character character, String id) {
@@ -43,7 +49,7 @@ public class ServiceCharacterImpl  implements ICharacterService{
 				.flatMap(repo::save);
 				//.switchIfEmpty(Mono.just(new Character()));
 	}
-
+	
 	@Override
 	public Mono<Character> delete(String id){
 		// TODO Auto-generated method stub
@@ -64,7 +70,4 @@ public class ServiceCharacterImpl  implements ICharacterService{
 		Mono<Void> mono = repo.deleteAll().then();
 		return mono;
 	}
-
-	
-
 }

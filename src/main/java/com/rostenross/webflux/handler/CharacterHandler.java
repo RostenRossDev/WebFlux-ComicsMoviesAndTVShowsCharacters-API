@@ -3,14 +3,19 @@ package com.rostenross.webflux.handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import com.rostenross.webflux.model.Character;
+import com.rostenross.webflux.repository.UserRepository;
 import com.rostenross.webflux.service.ServiceCharacterImpl;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -19,9 +24,13 @@ public class CharacterHandler {
 	@Autowired
 	private ServiceCharacterImpl service;
 	
+	@Autowired
+	private UserRepository repo;
+	
 	public Mono<ServerResponse> findAll(ServerRequest req) {
 		log.info(service.getAll().toString());
 		log.info("En el handler de findall");
+	
 		return ServerResponse.ok()
 				.contentType(MediaType.APPLICATION_JSON)
 				.body(service.getAll(), Character.class);
@@ -53,6 +62,15 @@ public class CharacterHandler {
 				mono.flatMap(
 					toWrite -> this.service.create(new Character(toWrite.getFullName(), toWrite.getDescription()))), Character.class);
 	}
+	
+	public Mono<ServerResponse> saveAll(ServerRequest req){
+		Flux<Character> flux = req.bodyToFlux(Character.class);
+		
+		return ServerResponse.ok()
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(flux.flatMap(toWrite -> service.create(new Character(toWrite.getFullName(), toWrite.getDescription()))), Character.class);
+	}
+	
 	public Mono<ServerResponse> delete(ServerRequest req){
 		return ServerResponse.ok()
 				.contentType(MediaType.APPLICATION_JSON)

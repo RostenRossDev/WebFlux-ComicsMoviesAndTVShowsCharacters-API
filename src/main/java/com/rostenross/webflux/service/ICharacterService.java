@@ -15,6 +15,8 @@ public interface ICharacterService {
 	
 	public Mono<Character> create(Character caracter);
 	
+	public Flux<Character> createMany(Flux<Character> character);
+	
 	public Mono<Character> update(Character character, String id);
 	
 	public Mono<Character> delete(String id);
